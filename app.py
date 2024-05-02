@@ -27,7 +27,9 @@ def get_subtitle():
         return jsonify(refined_transcript)
     except NoTranscriptFound as e:
         app.logger.exception("No transcript found for video ID: {}".format(video_id))
-        return jsonify({"error": "자막을 찾을 수 없습니다. 비디오가 자막을 지원하지 않거나 요청된 언어가 지원되지 않을 수 있습니다."}), 404
+        return jsonify({"error": "자막을 찾을 수 없습니다. 비디오가 자막을 지원하지 않거나 요청된 언어가 지원되지 않을 수 있습니다."}), 403
+    except TranscriptsDisabled:
+        return jsonify({"error": "이 동영상에서는 자막 기능이 비활성화되어 있습니다. 동영상 소유자가 자막 사용을 허용하지 않았을 수 있습니다."}), 403
     except VideoUnavailable as e:
         app.logger.exception("Video unavailable: {}".format(video_id))
         return jsonify({"error": "비디오 ID가 유효하지 않거나 비디오가 사용할 수 없습니다. 비디오 ID를 확인하세요."}), 404
